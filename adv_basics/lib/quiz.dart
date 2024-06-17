@@ -15,36 +15,55 @@ class Quiz extends StatefulWidget {
 
 //creo la classe QuizState perchè è un widget statefull
 class _QuizState extends State<Quiz> {
-  
   // Widget activeScreen = const StartScreen(switchScreen);
 
   // ^ devo fare in modo che StartScreen (la mia funzione di schermata iniziale)
   //possa avere accesso alla funzione di commutazione della schermata (switchScreen),
   //Come faccio?
   //Passo un puntatore alla schermata di commutazione per avviare la schermata
-  //quindi, aggiungo il nome del metodo(switchScreen) alla 
+  //quindi, aggiungo il nome del metodo(switchScreen) alla
   //mia schermata iniziale (StartScreen riga 18) senza mettere le ()
   //altrimenti chiamerebbe subito la funzione, in wuesto modo utilizzo
   //la funzione ogni volta che mi serve
- 
-  Widget? activeScreen; //lo impostiamo su null, e aggiungo il ? per dire che activeScreen può essere anche null
-                        //non ha un valore perchè verrà poi creato in initState
 
-@override
-//setto uno stato di inizializzazione
-  void initState() {
-    activeScreen = StartScreen(switchScreen); //imposto come schermo attivo la schermata iniziale
-    super.initState(); //verrà chiamato questo initState prima di ogi cosa, in maniera tale da inizializzare prima la schermata di avvio
-  }
+//  -------------------- METODO CON INIT
+//   Widget? activeScreen; //lo impostiamo su null, e aggiungo il ? per dire che activeScreen può essere anche null
+//                         //non ha un valore perchè verrà poi creato in initState
 
- void switchScreen() {
-    setState(() {  //imposto il cambiamento di stato
-      activeScreen = const QuestionsScreen();
+// @override
+// //setto uno stato di inizializzazione
+//   void initState() {
+//     activeScreen = StartScreen(switchScreen); //imposto come schermo attivo la schermata iniziale
+//     super.initState(); //verrà chiamato questo initState prima di ogi cosa, in maniera tale da inizializzare prima la schermata di avvio
+//   }
+// --------------------
+
+//-------------------- METODO 2
+//invece di memorizzare la schermata attiva in una variabile, possiamo memorizzare
+//un identificatore di schermata
+  var activeScreen = 'start-screen';
+//Il vantaggio è che posso inizializzare lo schermo attivo con una stringa
+//e possiamo capire i widget che vengono resi in base al valore della stringa
+
+  void switchScreen() {
+    setState(() {
+      //imposto il cambiamento di stato
+
+      //METODO INIT
+      // activeScreen = const QuestionsScreen();
+      //METODO 2
+      //sostituisco il widget con una stringa
+      activeScreen = 'questions-screen';
     });
   }
 
   @override
   Widget build(context) {
+    //METODO 2
+    final screenWidget = activeScreen == 'start-screen'
+              ? StartScreen(switchScreen)
+              : const QuestionsScreen();
+
     return MaterialApp(
       home: Scaffold(
         body: Container(
@@ -55,7 +74,10 @@ class _QuizState extends State<Quiz> {
               Color.fromARGB(255, 107, 68, 151)
             ], begin: Alignment.topLeft, end: Alignment.bottomRight),
           ),
-          child: activeScreen,
+          //METODO INIT
+          // child: activeScreen,
+          //METODO 2
+          child: screenWidget,
         ),
       ),
     );
